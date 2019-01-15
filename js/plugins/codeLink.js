@@ -21,7 +21,7 @@
       name : "Show Copy URL Icon",
       description : "Show an icon that will create a URL containing the code from the Code Editor and will copy it to the clipboard. Great for sharing your code on Twitter/Websites/etc",
       type : "boolean",
-      defaultValue : false, 
+      defaultValue : true,
       onChange : function(newValue) { showIcon(newValue); }
     });    
 
@@ -45,24 +45,35 @@
       if (icon!==undefined) icon.remove();
     }
   }
-  
+
+  // from https://github.com/lgarron/clipboard-polyfill/blob/master/clipboard-polyfill.ts
+  function selectionSet(elem) {
+    var sel = document.getSelection();
+    if (sel) {
+      var range = document.createRange();
+      range.selectNodeContents(elem);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      return true;
+    }
+  }
+
   function copyCodeLink() {
     var code = Espruino.Core.Code.getCurrentCode();
-    var url = "http://www.espruino.com/webide?code="+encodeURIComponent(code);
-    if (url.length > MAX_URL) {
-      Espruino.Core.Notifications.error("Your code is too large for a URL (greater than "+MAX_URL+" characters)");
-      return;
+    var copier = document.createElement('span');
+    copier.innerText = code;
+    document.body.appendChild(copier);
+
+    if (selectionSet(copier) && document.execCommand('copy')) {
+      Espruino.Core.Notifications.info("Code copied to clipboard");
+    } else {
+      Espruino.Core.Notifications.error("Failed to copy to clipboard");
     }
-    
-    
-    var copier = $('<textarea rows="1" cols="1"></textarea>').appendTo(document.body);
-    copier.val(url).select();
-    document.execCommand('copy');
+
     copier.remove();
-    
-    Espruino.Core.Notifications.info("URL Copied to clipboard");
+
   };
-  
+
   Espruino.Plugins.CodeLink = {
     init : init,
   };
