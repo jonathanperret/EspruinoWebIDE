@@ -61,6 +61,8 @@
         }
       }
       // write the modified code into local storage
+      if(Espruino.Config.AUTO_SAVE_CODE)
+        Espruino.Config.set("CODE", cm.getValue());
       if ((typeof chrome!="undefined") && chrome.storage && chrome.storage.local)
         chrome.storage.local.set({"CODE_JS": cm.getValue()});
     });
