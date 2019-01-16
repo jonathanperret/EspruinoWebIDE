@@ -1,1 +1,8 @@
-{}
+{
+  "version": 2,
+  "routes": [
+    { "src": "(/EspruinoTools/.*)", "dest": "https://code.jonathanperret.net/EspruinoWebIDE/$1" },
+    { "src": "/.*", "headers": { "cache-control": "maxage=0, s-maxage=0, must-revalidate" } }
+  ],
+  "alias": ["jonathanperret-espruino"]
+}
